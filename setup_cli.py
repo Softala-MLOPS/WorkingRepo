@@ -2,8 +2,7 @@ import os
 import typer
 import subprocess
 
-def main(name: str):
-    print(f"Hello {name}")
+def main():
     subprocess.run(f"mkdir -p data", shell=True, capture_output=True)
     os.chdir("data")
     subprocess.run(f'echo "data" > Readme.md', shell=True, capture_output=True)
