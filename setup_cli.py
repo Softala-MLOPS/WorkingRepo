@@ -3,6 +3,13 @@ import typer
 import subprocess
 
 def main():
+
+    result = subprocess.run("gh auth status", shell=True, capture_output=True, text=True)
+    if "Logged in to github.com account" not in result.stdout:
+        subprocess.run("gh auth login", shell=True)
+    subprocess.run('gh repo create cli-repo --public --description "Your repository description" --clone', shell=True)
+    os.chdir("cli-repo")
+
     subprocess.run(f"mkdir -p data", shell=True, capture_output=True)
     os.chdir("data")
     subprocess.run(f'echo "data" > Readme.md', shell=True, capture_output=True)
