@@ -18,8 +18,8 @@ def create_repo():
     result = subprocess.run("gh auth status", shell=True, capture_output=True, text=True)
     if "Logged in to github.com account" not in result.stdout:
         subprocess.run("gh auth login", shell=True)
-    subprocess.run('gh repo create ConfigRepo --public --description "Your repository description" --clone', shell=True)
-    os.chdir("ConfigRepo")
+    subprocess.run('gh repo create Softala-MLOPS/configRepoCLI --public --description "Upstream repository" --clone', shell=True)
+    os.chdir("configRepoCLI")
 
 def create_repo_structure():
     """Create the repository structure."""
@@ -50,9 +50,13 @@ def create_repo_structure():
     subprocess.run(f'touch .gitignore', shell=True, capture_output=True)
     subprocess.run(f'touch LICENSE', shell=True, capture_output=True)
     subprocess.run(f'touch README.md', shell=True, capture_output=True)
-    subprocess.run(f'touch requirements', shell=True, capture_output=True)
-    subprocess.run([f"git", 'add', '.'])
+    subprocess.run(f'touch requirements.txt', shell=True, capture_output=True)
 
+def push_repo():
+    """Push the repository to GitHub."""
+    subprocess.run([f"git", 'add', '.'])
+    subprocess.run([f"git", 'commit', '-m', '"Initial commit"'])
+    subprocess.run([f"git", 'push', 'origin', 'main'])
 
 def main():
 
@@ -64,6 +68,10 @@ def main():
 
     print("Creating the repository structure...")
     create_repo_structure()
+
+    print("Pushing the repository to GitHub...")
+    push_repo()
+
 
 
 
