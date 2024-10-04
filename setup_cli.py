@@ -14,19 +14,15 @@ def check_gh_installed():
         typer.echo("GitHub CLI (gh) is not installed.")
         sys.exit(1)
 
-def main():
-
-    print("Checking if GitHub CLI is installed...")
-    check_gh_installed()
-
-    print("Creating a new repository...")
+def create_repo():
     result = subprocess.run("gh auth status", shell=True, capture_output=True, text=True)
     if "Logged in to github.com account" not in result.stdout:
         subprocess.run("gh auth login", shell=True)
-    subprocess.run('gh repo create cli-repo --public --description "Your repository description" --clone', shell=True)
-    os.chdir("cli-repo")
+    subprocess.run('gh repo create ConfigRepo --public --description "Your repository description" --clone', shell=True)
+    os.chdir("ConfigRepo")
 
-    print("Creating the repository structure...")
+def create_repo_structure():
+    """Create the repository structure."""
     subprocess.run(f"mkdir -p data", shell=True, capture_output=True)
     os.chdir("data")
     subprocess.run(f'echo "data" > Readme.md', shell=True, capture_output=True)
@@ -57,5 +53,20 @@ def main():
     subprocess.run(f'touch requirements', shell=True, capture_output=True)
     subprocess.run([f"git", 'add', '.'])
 
+
+def main():
+
+    print("Checking if GitHub CLI is installed...")
+    check_gh_installed()
+
+    print("Creating a new repository...")
+    create_repo()
+
+    print("Creating the repository structure...")
+    create_repo_structure()
+
+
+
+    
 if __name__ == "__main__":
     typer.run(main)
