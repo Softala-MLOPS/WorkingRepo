@@ -28,6 +28,25 @@ def get_repo_owner():
 def fork_repo(owner):
     # Run the gh command to fork the repo
     subprocess.run(f'gh repo fork {owner}/{repo_name} --clone --fork-name "working-repo"', shell=True)
+    print("Repository forked successfully") 
+
+def create_branches():
+    # Set the working directory to the cloned repo
+    working_repo_path = os.path.join(os.getcwd(), "working-repo")
+    
+    # Create branches for development
+    subprocess.run(f'git checkout -b development', shell=True, cwd=working_repo_path)
+    subprocess.run(f'git push origin development', shell=True, cwd=working_repo_path)
+    
+    subprocess.run(f'git checkout -b staging', shell=True, cwd=working_repo_path)
+    subprocess.run(f'git push origin staging', shell=True, cwd=working_repo_path)
+    
+    subprocess.run(f'git checkout -b production', shell=True, cwd=working_repo_path)
+    subprocess.run(f'git push origin production', shell=True, cwd=working_repo_path)
+    
+    print("Branches created successfully")
+    print("List of current branches:")
+    subprocess.run(f'git branch -a', shell=True, cwd=working_repo_path, capture_output=True)
 
 def main():
 
@@ -36,6 +55,10 @@ def main():
     
     print("Forking the repository...")
     fork_repo(repo_owner)
+
+    print("Creating branches...")
+    create_branches()
+
 
 
 if __name__ == "__main__":
