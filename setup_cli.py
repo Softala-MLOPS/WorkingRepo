@@ -2,6 +2,7 @@ import os
 import typer
 import subprocess
 import sys
+import shutil
 
 def check_gh_installed():
     """Check if GitHub CLI is installed."""
@@ -52,6 +53,44 @@ def create_repo_structure():
     subprocess.run(f'touch README.md', shell=True, capture_output=True)
     subprocess.run(f'touch requirements.txt', shell=True, capture_output=True)
 
+def set_config():
+    """Create a config file for github secrets"""
+
+    print("1 Create config file\n2 Specify file path to an existing config file")
+    choise = int(input())
+
+    if choise == 1:
+        """No config file"""
+        file = open(".config", "w")
+        print("Specify Kubeflow endpoint (if empty uses http://localhost:8080 by default)")
+        kep = input()
+        if kep == "":
+            kep = "http://localhost:8080"
+        print("Specify Kubeflow username (if empty uses user@example.com by default)")
+        kun = input()
+        if kun == "":
+            kun = "user@example.com"
+        print("Specify Kubeflow password (if empty uses 12341234 by default)")
+        kpw = input()
+        if kpw == "":
+            kpw = "12341234"
+        file.write(f'KUBEFLOW_ENDPOINT={kep}\n')
+        file.write(f'KUBEFLOW_USERNAME={kun}\n')
+        file.write(f'KUBEFLOW_PASSWORD={kpw}\n')
+        file.close()
+    elif choise == 2:
+        """Already a config file"""
+        print('Enter path to config file:')
+        fpath = input()
+        file = open(fpath, "r").read()
+        if "KUBEFLOW_ENDPOINT" not in file:
+            print("missing KUBEFLOW_ENDPOINT")
+        if "KUBEFLOW_USERNAME" not in file:
+            print("missing KUBEFLOW_USERNAME")
+        if "KUBEFLOW_PASSWORD" not in file:
+            print("missing KUBEFLOW_PASSWORD")
+        shutil.copyfile(fpath, "../")
+
 def push_repo():
     """Push the repository to GitHub."""
     subprocess.run([f"git", 'add', '.'])
@@ -60,18 +99,20 @@ def push_repo():
 
 def main():
 
-    print("Checking if GitHub CLI is installed...")
+    """ print("Checking if GitHub CLI is installed...")
     check_gh_installed()
 
     print("Creating a new repository...")
     create_repo()
 
     print("Creating the repository structure...")
-    create_repo_structure()
+    create_repo_structure() """
 
-    print("Pushing the repository to GitHub...")
+    set_config()
+
+    """ print("Pushing the repository to GitHub...")
     push_repo()
-
+ """
 
 
 
