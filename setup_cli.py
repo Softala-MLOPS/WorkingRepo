@@ -96,12 +96,13 @@ def set_config():
     elif choise == 2:
         """Already a config file"""
         print('Enter path to config file:')
+        file = open(".config", "w")
         fpath = input()
         split_file = open(fpath, "r").read().split('\n')
         for i, split_pair in enumerate(split_file):
+            file.write(f'{split_file[i]}')
             split_pair = split_file[i].split(' = ')
             subprocess.run(f'gh secret set {split_pair[0]} --body {split_pair[0]}', shell=True)
-        shutil.copyfile(fpath, "./.config")
 
 def push_repo():
     """Push the repository to GitHub."""
