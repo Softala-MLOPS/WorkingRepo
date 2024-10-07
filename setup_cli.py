@@ -74,22 +74,34 @@ def set_config():
         kpw = input()
         if kpw == "":
             kpw = "12341234"
+        print("Add remote cluster private key")
+        remote_key = input()
+        print("Specify remote cluster IP")
+        remote_ip = input()
+        print("Add remote cluster username")
+        remote_username = input()
         file.write(f'KUBEFLOW_ENDPOINT={kep}\n')
         file.write(f'KUBEFLOW_USERNAME={kun}\n')
         file.write(f'KUBEFLOW_PASSWORD={kpw}\n')
+        file.write(f'REMOTE_CSC_CLUSTER_SSH_PRIVATE_KEY={remote_key}\n')
+        file.write(f'REMOTE_CSC_CLUSTER_SSH_IP={remote_ip}\n')
+        file.write(f'REMOTE_CSC_CLUSTER_SSH_USERNAME={remote_username}\n')
         file.close()
+        subprocess.run(f'gh secret set KUBEFLOW_ENDPOINT --body {kep}', shell=True)
+        subprocess.run(f'gh secret set KUBEFLOW_USERNAME --body {kun}', shell=True)
+        subprocess.run(f'gh secret set KUBEFLOW_PASSWORD --body {kpw}', shell=True)
+        subprocess.run(f'gh secret set REMOTE_CSC_CLUSTER_SSH_PRIVATE_KEY --body {remote_key}', shell=True)
+        subprocess.run(f'gh secret set REMOTE_CSC_CLUSTER_SSH_IP --body {remote_ip}', shell=True)
+        subprocess.run(f'gh secret set REMOTE_CSC_CLUSTER_SSH_USERNAME --body {remote_username}', shell=True)
     elif choise == 2:
         """Already a config file"""
         print('Enter path to config file:')
         fpath = input()
-        file = open(fpath, "r").read()
-        if "KUBEFLOW_ENDPOINT" not in file:
-            print("missing KUBEFLOW_ENDPOINT")
-        if "KUBEFLOW_USERNAME" not in file:
-            print("missing KUBEFLOW_USERNAME")
-        if "KUBEFLOW_PASSWORD" not in file:
-            print("missing KUBEFLOW_PASSWORD")
-        shutil.copyfile(fpath, "../")
+        split_file = open(fpath, "r").read().split('\n')
+        for i, split_pair in enumerate(split_file):
+            split_pair = split_file[i].split(' = ')
+            subprocess.run(f'gh secret set {split_pair[0]} --body {split_pair[0]}', shell=True)
+        shutil.copyfile(fpath, "./.config")
 
 def push_repo():
     """Push the repository to GitHub."""
@@ -99,20 +111,20 @@ def push_repo():
 
 def main():
 
-    """ print("Checking if GitHub CLI is installed...")
+    print("Checking if GitHub CLI is installed...")
     check_gh_installed()
 
     print("Creating a new repository...")
     create_repo()
 
     print("Creating the repository structure...")
-    create_repo_structure() """
-
+    create_repo_structure()
+    
     set_config()
 
-    """ print("Pushing the repository to GitHub...")
+    print("Pushing the repository to GitHub...")
     push_repo()
- """
+
 
 
 
